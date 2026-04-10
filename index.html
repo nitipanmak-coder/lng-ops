@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LNG Daily Ops — WI-NGR-OPS-001</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f7f6f3;
+  --surface: #ffffff;
+  --border: #e2e0da;
+  --text: #1a1916;
+  --muted: #6b6860;
+  --accent: #1a56db;
+  --accent-bg: #eff4ff;
+  --success: #057a55;
+  --success-bg: #f0fdf4;
+  --warn: #b45309;
+  --warn-bg: #fffbeb;
+  --danger: #dc2626;
+  --danger-bg: #fef2f2;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,.08);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'IBM Plex Sans Thai', sans-serif; background: var(--bg); color: var(--text); font-size: 15px; line-height: 1.6; }
+.container { max-width: 680px; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
+
+/* AUTH */
+.auth-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+.auth-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 2.5rem 2rem; text-align: center; max-width: 360px; width: 100%; box-shadow: var(--shadow); }
+.auth-icon { font-size: 40px; margin-bottom: 1rem; }
+.auth-card h1 { font-size: 20px; font-weight: 600; margin-bottom: .25rem; }
+.auth-card p { font-size: 13px; color: var(--muted); margin-bottom: 1.5rem; }
+.google-btn { display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 16px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); color: var(--text); font-size: 14px; font-family: inherit; cursor: pointer; justify-content: center; transition: background .15s; }
+.google-btn:hover { background: var(--bg); }
+.err-msg { font-size: 13px; color: var(--danger); margin-top: .75rem; min-height: 18px; }
+
+/* TOP BAR */
+.topbar { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 1rem; }
+.user-row { display: flex; align-items: center; gap: 8px; }
+.avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--accent-bg); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; }
+.user-name { font-size: 13px; font-weight: 500; }
+.signout { font-size: 12px; color: var(--muted); cursor: pointer; border: none; background: none; padding: 4px 8px; border-radius: 6px; font-family: inherit; }
+.signout:hover { background: var(--bg); }
+
+/* DATE BAR */
+.datebar { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; font-size: 13px; }
+.datebar span:last-child { font-weight: 500; }
+
+/* APP TABS */
+.app-tabs { display: flex; gap: 6px; margin-bottom: 1rem; }
+.app-tab { padding: 7px 16px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--muted); font-size: 13px; font-family: inherit; cursor: pointer; transition: all .15s; }
+.app-tab.active { background: var(--accent-bg); color: var(--accent); border-color: var(--accent); font-weight: 500; }
+.view { display: none; }
+.view.active { display: block; }
+
+/* STEP TABS */
+.step-tabs { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: .75rem; }
+.tab-btn { padding: 6px 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--muted); font-size: 12px; font-family: inherit; cursor: pointer; transition: all .15s; }
+.tab-btn.active { background: var(--accent-bg); color: var(--accent); border-color: var(--accent); font-weight: 500; }
+.section { display: none; }
+.section.active { display: block; }
+
+/* PROGRESS */
+.prog-wrap { background: var(--border); border-radius: 20px; height: 4px; margin-bottom: 1.25rem; }
+.prog-bar { height: 4px; border-radius: 20px; background: var(--accent); transition: width .35s ease; }
+
+/* CARD */
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1rem; box-shadow: var(--shadow); }
+.card-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 1rem; padding-bottom: 8px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+.time-tag { font-size: 11px; font-weight: 400; color: var(--muted); background: var(--bg); padding: 2px 8px; border-radius: 20px; }
+
+/* FORM */
+.field { margin-bottom: .875rem; }
+.label { font-size: 12px; color: var(--muted); margin-bottom: 4px; display: block; font-weight: 500; }
+.req { color: var(--danger); margin-left: 2px; }
+input[type=text], input[type=number], input[type=time], textarea, select {
+  width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px;
+  background: var(--surface); color: var(--text); font-size: 14px; font-family: inherit;
+  outline: none; transition: border-color .15s;
+}
+input:focus, textarea:focus, select:focus { border-color: var(--accent); }
+textarea { resize: vertical; min-height: 72px; line-height: 1.5; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+
+/* STATUS DISPLAY */
+.status-display { padding: 8px 10px; font-size: 13px; border-radius: 8px; background: var(--bg); color: var(--muted); }
+.pill { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+.pill-ok { background: var(--success-bg); color: var(--success); }
+.pill-warn { background: var(--warn-bg); color: var(--warn); }
+.pill-danger { background: var(--danger-bg); color: var(--danger); }
+
+/* CHECKLIST */
+.check-item { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 6px; cursor: pointer; transition: background .1s; }
+.check-item:hover { background: var(--bg); }
+.check-item.done { background: var(--success-bg); border-color: #bbf7d0; }
+.check-item input[type=checkbox] { width: 15px; height: 15px; flex-shrink: 0; accent-color: var(--success); }
+.check-label { font-size: 13px; }
+
+/* ALERT */
+.alert { padding: 10px 14px; border-radius: 8px; font-size: 13px; margin-bottom: .875rem; }
+.alert-warn { background: var(--warn-bg); color: var(--warn); border: 1px solid #fde68a; }
+.alert-info { background: var(--accent-bg); color: var(--accent); border: 1px solid #bfdbfe; }
+
+/* NAV */
+.nav { display: flex; justify-content: space-between; margin-top: 1.25rem; gap: 8px; }
+.nav-btn { flex: 1; padding: 9px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--muted); font-size: 13px; font-family: inherit; cursor: pointer; transition: background .15s; }
+.nav-btn:hover { background: var(--bg); }
+.nav-btn.primary { border-color: var(--accent); color: var(--accent); font-weight: 500; }
+
+/* SAVE */
+.save-btn { width: 100%; padding: 11px; border: 1px solid var(--accent); border-radius: var(--radius); background: var(--accent); color: #fff; font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer; margin-top: 1rem; transition: opacity .15s; }
+.save-btn:hover { opacity: .9; }
+.save-btn:disabled { opacity: .5; cursor: not-allowed; }
+.save-status { text-align: center; font-size: 13px; margin-top: .5rem; min-height: 20px; }
+.save-ok { color: var(--success); }
+.save-err { color: var(--danger); }
+
+/* DIVIDER */
+hr { border: none; border-top: 1px solid var(--border); margin: 1rem 0; }
+
+/* METRIC CARDS */
+.metric-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 1rem; }
+.metric { background: var(--bg); border-radius: 8px; padding: 10px 12px; }
+.metric-label { font-size: 11px; color: var(--muted); font-weight: 500; margin-bottom: 2px; }
+.metric-val { font-size: 22px; font-weight: 600; font-family: 'IBM Plex Mono', monospace; }
+.metric-unit { font-size: 11px; color: var(--muted); font-weight: 400; margin-left: 2px; }
+
+/* HISTORY */
+.hist-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+.hist-title { font-size: 15px; font-weight: 600; }
+.refresh-btn { padding: 6px 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--muted); font-size: 12px; font-family: inherit; cursor: pointer; }
+.hist-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; margin-bottom: 8px; cursor: pointer; transition: border-color .15s; box-shadow: var(--shadow); }
+.hist-card:hover { border-color: var(--accent); }
+.hist-date { font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+.hist-by { font-size: 11px; color: var(--muted); font-weight: 400; margin-left: 6px; }
+.hist-row { display: flex; gap: 14px; flex-wrap: wrap; }
+.hist-item { font-size: 12px; color: var(--muted); }
+.hist-item strong { color: var(--text); font-weight: 500; }
+.hist-detail { background: var(--accent-bg); border: 1px solid var(--accent); border-radius: var(--radius); padding: 14px; margin-bottom: 8px; display: none; }
+.hist-detail.open { display: block; }
+.detail-title { font-size: 11px; font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 6px; margin-top: .75rem; }
+.detail-title:first-child { margin-top: 0; }
+.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+.detail-field { font-size: 13px; }
+.detail-field span { color: var(--muted); }
+.hist-empty { text-align: center; padding: 2.5rem; color: var(--muted); font-size: 14px; }
+.loading-text { text-align: center; padding: 1.5rem; color: var(--muted); font-size: 14px; }
+.imb-display { padding: 8px 10px; font-size: 14px; font-weight: 600; border-radius: 8px; background: var(--bg); font-family: 'IBM Plex Mono', monospace; }
+
+@media (max-width: 480px) {
+  .row3 { grid-template-columns: 1fr 1fr; }
+  .metric-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- AUTH -->
+<div class="auth-wrap" id="auth-screen">
+  <div class="auth-card">
+    <div class="auth-icon">⛽</div>
+    <h1>LNG Daily Operations</h1>
+    <p>WI-NGR-OPS-001 · Supply LNG to CFP Project (130 MMSCFD)</p>
+    <button class="google-btn" onclick="signIn()">
+      <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      Sign in with Google
+    </button>
+    <div class="err-msg" id="auth-err"></div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div class="container" id="main-app" style="display:none">
+  <div class="topbar">
+    <div class="user-row">
+      <div class="avatar" id="user-av">—</div>
+      <span class="user-name" id="user-nm">—</span>
+    </div>
+    <button class="signout" onclick="doSignOut()">ออกจากระบบ</button>
+  </div>
+
+  <div class="datebar">
+    <span style="color:var(--muted);font-size:12px">วันที่</span>
+    <span id="today-date"></span>
+  </div>
+
+  <div class="app-tabs">
+    <button class="app-tab active" onclick="switchTab('form')">กรอกข้อมูลวันนี้</button>
+    <button class="app-tab" onclick="switchTab('history')">ประวัติย้อนหลัง</button>
+  </div>
+
+  <!-- FORM VIEW -->
+  <div class="view active" id="view-form">
+    <div class="step-tabs">
+      <button class="tab-btn active" onclick="goStep(0)">1 · Morning</button>
+      <button class="tab-btn" onclick="goStep(1)">2 · Daytime</button>
+      <button class="tab-btn" onclick="goStep(2)">3 · Evening</button>
+      <button class="tab-btn" onclick="goStep(3)">4 · Overnight</button>
+      <button class="tab-btn" onclick="goStep(4)">สรุป & บันทึก</button>
+    </div>
+    <div class="prog-wrap"><div class="prog-bar" id="prog" style="width:20%"></div></div>
+
+    <!-- STEP 1 -->
+    <div class="section active" id="s0">
+      <div class="card">
+        <div class="card-title">Morning Preparation <span class="time-tag">06:00–08:00</span></div>
+        <div class="row2">
+          <div class="field"><label class="label">Tank Inventory (%)<span class="req">*</span></label><input type="number" id="tank_inv" placeholder="%" step="0.01" oninput="chkTank()"></div>
+          <div class="field"><label class="label">สถานะ</label><div class="status-display" id="tank-st">รอกรอกข้อมูล</div></div>
+        </div>
+        <div class="row2">
+          <div class="field"><label class="label">Pipeline Pressure (bar)<span class="req">*</span></label><input type="number" id="pipe_press" placeholder="bar" step="0.1"></div>
+          <div class="field"><label class="label">Flow Rate (MMSCFD)</label><input type="number" id="flow_rate" placeholder="MMSCFD" step="0.01"></div>
+        </div>
+        <div class="row2">
+          <div class="field"><label class="label">Regasification Rate (MMSCFD)</label><input type="number" id="regas_rate" placeholder="MMSCFD" step="0.01"></div>
+          <div class="field"><label class="label">CFP Demand Forecast (MMSCFD)<span class="req">*</span></label><input type="number" id="cfp_demand" placeholder="MMSCFD" step="0.01"></div>
+        </div>
+        <hr>
+        <div style="font-size:13px;font-weight:600;margin-bottom:.75rem">Daily Nomination</div>
+        <div class="row3">
+          <div class="field"><label class="label">Nomination Plan (MMSCFD)</label><input type="number" id="nom_plan" placeholder="Weekly Plan" step="0.01"></div>
+          <div class="field"><label class="label">Nomination ปรับแล้ว</label><input type="number" id="nom_adj" placeholder="หลังปรับ" step="0.01"></div>
+          <div class="field"><label class="label">เลขที่ Nomination</label><input type="text" id="nom_ref" placeholder="NOM-YYYYMMDD-001"></div>
+        </div>
+        <div class="row2">
+          <div class="field"><label class="label">เวลาส่ง → PTT LNG</label><input type="time" id="nom_pttlng" value="07:00"></div>
+          <div class="field"><label class="label">เวลาส่ง → TSO</label><input type="time" id="nom_tso" value="07:30"></div>
+        </div>
+        <hr>
+        <label class="check-item" id="c0"><input type="checkbox" onchange="tglChk('c0')"><span class="check-label">ส่ง Nomination → PTT LNG ภายใน 07:00 น.</span></label>
+        <label class="check-item" id="c1"><input type="checkbox" onchange="tglChk('c1')"><span class="check-label">ส่ง Nomination → TSO ภายใน 07:30 น.</span></label>
+        <label class="check-item" id="c2"><input type="checkbox" onchange="tglChk('c2')"><span class="check-label">จัดทำ Morning Status Summary แล้ว</span></label>
+        <label class="check-item" id="c3"><input type="checkbox" onchange="tglChk('c3')"><span class="check-label">ส่ง Morning Summary → Senior Engineer ภายใน 08:00 น.</span></label>
+      </div>
+      <div class="nav"><div></div><button class="nav-btn primary" onclick="goStep(1)">ถัดไป: Daytime →</button></div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="section" id="s1">
+      <div class="card">
+        <div class="card-title">Daytime Monitoring <span class="time-tag">08:00–17:00</span></div>
+        <div class="row3">
+          <div class="field"><label class="label">Actual Usage (MMSCFD)<span class="req">*</span></label><input type="number" id="actual_usage" placeholder="ค่าจริง" step="0.01"></div>
+          <div class="field"><label class="label">Tank Level ปัจจุบัน (%)</label><input type="number" id="tank_now" placeholder="%" step="0.01"></div>
+          <div class="field"><label class="label">เวลาบันทึก</label><input type="time" id="hourly_time"></div>
+        </div>
+        <div class="field"><label class="label">สถานะ Demand</label>
+          <select id="demand_status" onchange="updDemand()">
+            <option value="normal">ปกติ — อยู่ใน Tolerance</option>
+            <option value="over">Over-demand — มากกว่าแผน</option>
+            <option value="under">Under-demand — น้อยกว่าแผน</option>
+          </select>
+        </div>
+        <div id="over-act" style="display:none">
+          <div class="alert alert-warn">⚠ Over-demand — ดำเนินการตามลำดับ</div>
+          <label class="check-item" id="c4"><input type="checkbox" onchange="tglChk('c4')"><span class="check-label">ประเมินขนาดความเบี่ยงเบน เทียบ Tolerance</span></label>
+          <label class="check-item" id="c5"><input type="checkbox" onchange="tglChk('c5')"><span class="check-label">ส่ง Re-nomination → TSO และ PTT LNG</span></label>
+          <label class="check-item" id="c6"><input type="checkbox" onchange="tglChk('c6')"><span class="check-label">ประสาน Trading BU ซื้อ Co-load (ถ้าจำเป็น)</span></label>
+          <label class="check-item" id="c7"><input type="checkbox" onchange="tglChk('c7')"><span class="check-label">แจ้ง Senior Engineer / On-call Manager</span></label>
+        </div>
+        <div id="under-act" style="display:none">
+          <div class="alert alert-info">ℹ Under-demand — ดำเนินการตามลำดับ</div>
+          <label class="check-item" id="c8"><input type="checkbox" onchange="tglChk('c8')"><span class="check-label">ประเมินขนาดความเบี่ยงเบน เทียบ Tolerance</span></label>
+          <label class="check-item" id="c9"><input type="checkbox" onchange="tglChk('c9')"><span class="check-label">ส่ง Re-nomination ลดปริมาณ → TSO และ PTT LNG</span></label>
+          <label class="check-item" id="c10"><input type="checkbox" onchange="tglChk('c10')"><span class="check-label">ประสาน Trading BU ระบาย Co-load (ถ้าจำเป็น)</span></label>
+        </div>
+        <div class="field" style="margin-top:.75rem"><label class="label">บันทึกการประสานงาน / เหตุการณ์</label><textarea id="daytime_notes" placeholder="เช่น ได้รับแจ้งจาก TSO เรื่อง..."></textarea></div>
+        <label class="check-item" id="c11"><input type="checkbox" onchange="tglChk('c11')"><span class="check-label">ตอบสนองต่อแจ้งเตือนภายใน 30 นาที</span></label>
+        <label class="check-item" id="c12"><input type="checkbox" onchange="tglChk('c12')"><span class="check-label">Update ข้อมูลใน System เป็นปัจจุบัน</span></label>
+      </div>
+      <div class="nav"><button class="nav-btn" onclick="goStep(0)">← Morning</button><button class="nav-btn primary" onclick="goStep(2)">ถัดไป: Evening →</button></div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="section" id="s2">
+      <div class="card">
+        <div class="card-title">Evening Review <span class="time-tag">17:00–20:00</span></div>
+        <div class="row3">
+          <div class="field"><label class="label">Nominated Volume (MMSCFD)</label><input type="number" id="eod_nom" placeholder="Nom" step="0.01" oninput="calcImb()"></div>
+          <div class="field"><label class="label">Actual รวมวัน (MMSCFD)<span class="req">*</span></label><input type="number" id="eod_actual" placeholder="Actual" step="0.01" oninput="calcImb()"></div>
+          <div class="field"><label class="label">Imbalance</label><div class="imb-display" id="imb-val">—</div></div>
+        </div>
+        <div class="row2">
+          <div class="field"><label class="label">Tank Opening (%)</label><input type="number" id="tank_open" placeholder="%" step="0.01"></div>
+          <div class="field"><label class="label">Tank Closing (%)</label><input type="number" id="tank_close" placeholder="%" step="0.01"></div>
+        </div>
+        <div class="field"><label class="label">สถานะ Imbalance</label>
+          <select id="imb_status"><option value="ok">อยู่ภายใน Tolerance</option><option value="warn">เกิน Tolerance — แจ้ง Senior แล้ว</option></select>
+        </div>
+        <div class="field"><label class="label">Pipeline Status</label><input type="text" id="pipe_status" placeholder="เช่น ปกติ / แรงดัน X bar"></div>
+        <div class="field"><label class="label">Events & Actions วันนี้</label><textarea id="events_actions" placeholder="เหตุการณ์สำคัญ, การดำเนินการ, ประเด็นติดตาม"></textarea></div>
+        <label class="check-item" id="c13"><input type="checkbox" onchange="tglChk('c13')"><span class="check-label">ยืนยัน Gas Allocation กับ TSO ภายใน 19:00 น.</span></label>
+        <label class="check-item" id="c14"><input type="checkbox" onchange="tglChk('c14')"><span class="check-label">ส่ง Daily Report → Senior Engineer ภายใน 19:30 น.</span></label>
+        <label class="check-item" id="c15"><input type="checkbox" onchange="tglChk('c15')"><span class="check-label">ส่ง Daily Imbalance Report → TSO ภายใน 20:00 น.</span></label>
+        <label class="check-item" id="c16"><input type="checkbox" onchange="tglChk('c16')"><span class="check-label">ส่ง Daily Gas Delivery Report → CFP/Thai Oil ภายใน 20:00 น.</span></label>
+      </div>
+      <div class="nav"><button class="nav-btn" onclick="goStep(1)">← Daytime</button><button class="nav-btn primary" onclick="goStep(3)">ถัดไป: Overnight →</button></div>
+    </div>
+
+    <!-- STEP 4 -->
+    <div class="section" id="s3">
+      <div class="card">
+        <div class="card-title">Overnight Watch <span class="time-tag">20:00–06:00</span></div>
+        <div class="row3">
+          <div class="field"><label class="label">เวลาบันทึก</label><input type="time" id="ov_time"></div>
+          <div class="field"><label class="label">Tank Inventory (%)</label><input type="number" id="ov_tank" placeholder="%" step="0.01"></div>
+          <div class="field"><label class="label">Pipeline Pressure (bar)</label><input type="number" id="ov_press" placeholder="bar" step="0.1"></div>
+        </div>
+        <div class="row2">
+          <div class="field"><label class="label">Send-out Rate (MMSCFD)</label><input type="number" id="ov_sendout" placeholder="MMSCFD" step="0.01"></div>
+          <div class="field"><label class="label">สถานะโดยรวม</label>
+            <select id="ov_status"><option value="normal">ปกติ</option><option value="alert">มีประเด็นติดตาม</option><option value="escalate">เรียก On-call Manager แล้ว</option></select>
+          </div>
+        </div>
+        <div class="field"><label class="label">บันทึก Overnight / Handover</label><textarea id="ov_notes" placeholder="เหตุการณ์, การดำเนินการ, ประเด็นส่งต่อ Morning shift"></textarea></div>
+      </div>
+      <div class="nav"><button class="nav-btn" onclick="goStep(2)">← Evening</button><button class="nav-btn primary" onclick="goStep(4)">สรุป & บันทึก →</button></div>
+    </div>
+
+    <!-- STEP 5 -->
+    <div class="section" id="s4">
+      <div class="card">
+        <div class="card-title">สรุปรายวัน</div>
+        <div id="summary-content"></div>
+        <button class="save-btn" id="save-btn" onclick="saveData()">บันทึกลง Firebase Firestore</button>
+        <div class="save-status" id="save-st"></div>
+      </div>
+      <div class="nav"><button class="nav-btn" onclick="goStep(3)">← Overnight</button><div></div></div>
+    </div>
+  </div>
+
+  <!-- HISTORY VIEW -->
+  <div class="view" id="view-history">
+    <div class="hist-header">
+      <span class="hist-title">ประวัติการบันทึกข้อมูล</span>
+      <button class="refresh-btn" onclick="loadHist()">โหลดใหม่</button>
+    </div>
+    <div id="hist-list"><div class="loading-text">กำลังโหลด...</div></div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut as fbOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+import { getFirestore, doc, setDoc, getDocs, collection, query, orderBy, limit } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+const cfg = {
+  apiKey: "AIzaSyDDmrBVyiZ6-EAQSLl5dhXS9CBnVQ-a1yA",
+  authDomain: "top-5c714.firebaseapp.com",
+  projectId: "top-5c714",
+  storageBucket: "top-5c714.firebasestorage.app",
+  messagingSenderId: "667480940442",
+  appId: "1:667480940442:web:2e86ecf96d970af2626423",
+  measurementId: "G-NK4RX207RH"
+};
+
+const app = initializeApp(cfg);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const provider = new GoogleAuthProvider();
+let me = null;
+
+onAuthStateChanged(auth, u => {
+  me = u;
+  if(u) {
+    document.getElementById('auth-screen').style.display = 'none';
+    document.getElementById('main-app').style.display = 'block';
+    const ini = (u.displayName||'U').split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase();
+    document.getElementById('user-av').textContent = ini||'U';
+    document.getElementById('user-nm').textContent = u.displayName||u.email;
+    window._loadHist();
+  } else {
+    document.getElementById('auth-screen').style.display = 'flex';
+    document.getElementById('main-app').style.display = 'none';
+  }
+});
+
+window.signIn = async () => {
+  document.getElementById('auth-err').textContent = '';
+  try { await signInWithPopup(auth, provider); }
+  catch(e) { document.getElementById('auth-err').textContent = e.message; }
+};
+window.doSignOut = () => fbOut(auth);
+
+window.saveData = async () => {
+  if(!me) return;
+  const btn = document.getElementById('save-btn');
+  const st = document.getElementById('save-st');
+  btn.disabled = true; st.textContent = 'กำลังบันทึก...'; st.className = 'save-status';
+  try {
+    const now = new Date();
+    const dk = now.toISOString().slice(0,10);
+    const d = collectAll();
+    d.meta = { uid: me.uid, name: me.displayName, email: me.email, savedAt: now.toISOString(), dateKey: dk };
+    await setDoc(doc(db, 'daily_ops', dk+'_'+me.uid), d, { merge: true });
+    st.textContent = '✓ บันทึกสำเร็จ — ' + now.toLocaleTimeString('th-TH');
+    st.className = 'save-status save-ok';
+  } catch(e) {
+    st.textContent = '✗ ' + e.message;
+    st.className = 'save-status save-err';
+  }
+  btn.disabled = false;
+};
+
+window._loadHist = async () => {
+  const list = document.getElementById('hist-list');
+  if(!me){ list.innerHTML='<div class="hist-empty">กรุณา Login ก่อน</div>'; return; }
+  list.innerHTML = '<div class="loading-text">กำลังโหลด...</div>';
+  try {
+    const q = query(collection(db,'daily_ops'), orderBy('meta.savedAt','desc'), limit(30));
+    const snap = await getDocs(q);
+    if(snap.empty){ list.innerHTML='<div class="hist-empty">ยังไม่มีข้อมูลที่บันทึก</div>'; return; }
+    list.innerHTML='';
+    snap.forEach(d => mkCard(d.data(), list));
+  } catch(e) {
+    list.innerHTML = `<div class="hist-empty">โหลดไม่สำเร็จ: ${e.message}</div>`;
+  }
+};
+
+function mkCard(data, container) {
+  const m = data.meta||{};
+  const nom = parseFloat(data.eod_nom)||0, act = parseFloat(data.eod_actual)||0;
+  const imb = (data.eod_nom&&data.eod_actual) ? (act-nom).toFixed(3) : null;
+  const ic = imb && Math.abs(parseFloat(imb))>3 ? 'var(--danger)' : 'var(--success)';
+  const card = document.createElement('div'); card.className='hist-card';
+  card.innerHTML=`
+    <div class="hist-date">${m.dateKey||'—'}<span class="hist-by">โดย ${m.name||m.email||'—'}</span></div>
+    <div class="hist-row">
+      <div class="hist-item">Tank: <strong>${data.tank_inv||'—'}%</strong></div>
+      <div class="hist-item">CFP Demand: <strong>${data.cfp_demand||'—'} MMSCFD</strong></div>
+      <div class="hist-item">Actual: <strong>${data.eod_actual||'—'} MMSCFD</strong></div>
+      ${imb?`<div class="hist-item">Imbalance: <strong style="color:${ic}">${parseFloat(imb)>0?'+':''}${imb}</strong></div>`:''}
+    </div>`;
+  card.onclick = () => {
+    let nx = card.nextElementSibling;
+    if(nx&&nx.classList.contains('hist-detail')){ nx.classList.toggle('open'); return; }
+    const det = document.createElement('div'); det.className='hist-detail open';
+    det.innerHTML=`
+      <div class="detail-title">Morning</div>
+      <div class="detail-grid">
+        <div class="detail-field"><span>Tank:</span> ${data.tank_inv||'—'}%</div>
+        <div class="detail-field"><span>Pressure:</span> ${data.pipe_press||'—'} bar</div>
+        <div class="detail-field"><span>Flow Rate:</span> ${data.flow_rate||'—'} MMSCFD</div>
+        <div class="detail-field"><span>CFP Demand:</span> ${data.cfp_demand||'—'} MMSCFD</div>
+        <div class="detail-field"><span>Nom Plan:</span> ${data.nom_plan||'—'} MMSCFD</div>
+        <div class="detail-field"><span>Nom Ref:</span> ${data.nom_ref||'—'}</div>
+      </div>
+      <div class="detail-title">Daytime</div>
+      <div class="detail-grid">
+        <div class="detail-field"><span>Actual Usage:</span> ${data.actual_usage||'—'} MMSCFD</div>
+        <div class="detail-field"><span>Demand Status:</span> ${data.demand_status||'—'}</div>
+      </div>
+      ${data.daytime_notes?`<div style="font-size:13px;margin-top:6px">${data.daytime_notes}</div>`:''}
+      <div class="detail-title">Evening</div>
+      <div class="detail-grid">
+        <div class="detail-field"><span>Nominated:</span> ${data.eod_nom||'—'} MMSCFD</div>
+        <div class="detail-field"><span>Actual:</span> ${data.eod_actual||'—'} MMSCFD</div>
+        <div class="detail-field"><span>Tank Open:</span> ${data.tank_open||'—'}%</div>
+        <div class="detail-field"><span>Tank Close:</span> ${data.tank_close||'—'}%</div>
+      </div>
+      ${data.events_actions?`<div style="font-size:13px;margin-top:6px;white-space:pre-wrap">${data.events_actions}</div>`:''}
+      <div class="detail-title">Overnight</div>
+      <div style="font-size:13px">${data.ov_notes||'ไม่มีเหตุการณ์'}</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:.5rem">บันทึกเมื่อ: ${m.savedAt?new Date(m.savedAt).toLocaleString('th-TH'):'—'}</div>`;
+    card.after(det);
+  };
+  container.appendChild(card);
+}
+
+function collectAll() {
+  const ids = ['tank_inv','pipe_press','flow_rate','regas_rate','cfp_demand','nom_plan','nom_adj','nom_ref',
+    'nom_pttlng','nom_tso','actual_usage','tank_now','hourly_time','demand_status','daytime_notes',
+    'eod_nom','eod_actual','tank_open','tank_close','imb_status','pipe_status','events_actions',
+    'ov_time','ov_tank','ov_press','ov_sendout','ov_status','ov_notes'];
+  const d = {};
+  ids.forEach(id => { const el=document.getElementById(id); if(el) d[id]=el.value; });
+  const chk = {};
+  for(let i=0;i<=16;i++){ const el=document.getElementById('c'+i); if(el) chk['c'+i]=el.querySelector('input')?.checked||false; }
+  d.checklists = chk;
+  return d;
+}
+</script>
+
+<script>
+window.goStep = i => {
+  document.querySelectorAll('.tab-btn').forEach((t,j)=>t.classList.toggle('active',j===i));
+  document.querySelectorAll('.section').forEach((s,j)=>s.classList.toggle('active',j===i));
+  document.getElementById('prog').style.width=[20,40,60,80,100][i]+'%';
+  if(i===4) buildSummary();
+};
+window.switchTab = tab => {
+  ['form','history'].forEach((t,i)=>{
+    document.querySelectorAll('.app-tab')[i].classList.toggle('active',t===tab);
+    document.getElementById('view-'+t).classList.toggle('active',t===tab);
+  });
+  if(tab==='history'&&window._loadHist) window._loadHist();
+};
+window.tglChk = id => {
+  const el=document.getElementById(id);
+  el.classList.toggle('done',el.querySelector('input').checked);
+};
+window.chkTank = () => {
+  const v=parseFloat(document.getElementById('tank_inv').value),s=document.getElementById('tank-st');
+  if(isNaN(v)){s.textContent='รอกรอกข้อมูล';s.className='status-display';return;}
+  if(v<20) s.innerHTML='<span class="pill pill-danger">Critical — แจ้ง Senior ทันที</span>';
+  else if(v<30) s.innerHTML='<span class="pill pill-warn">Alert — ใกล้ Critical</span>';
+  else s.innerHTML='<span class="pill pill-ok">ปกติ</span>';
+};
+window.updDemand = () => {
+  const v=document.getElementById('demand_status').value;
+  document.getElementById('over-act').style.display=v==='over'?'block':'none';
+  document.getElementById('under-act').style.display=v==='under'?'block':'none';
+};
+window.calcImb = () => {
+  const n=parseFloat(document.getElementById('eod_nom').value),a=parseFloat(document.getElementById('eod_actual').value);
+  const el=document.getElementById('imb-val');
+  if(!isNaN(n)&&!isNaN(a)){
+    const i=(a-n).toFixed(3);
+    el.textContent=(i>0?'+':'')+i+' MMSCFD';
+    el.style.color=Math.abs(i)>3?'var(--danger)':'var(--success)';
+  } else { el.textContent='—'; el.style.color=''; }
+};
+function buildSummary(){
+  const g=id=>(document.getElementById(id)||{}).value||'—';
+  const n=g('eod_nom'),a=g('eod_actual');
+  let imb='—',ic='var(--text)';
+  if(n!=='—'&&a!=='—'){const i=(parseFloat(a)-parseFloat(n)).toFixed(3);imb=(i>0?'+':'')+i+' MMSCFD';ic=Math.abs(parseFloat(i))>3?'var(--danger)':'var(--success)';}
+  const chks=document.querySelectorAll('.check-item input[type=checkbox]');
+  const done=Array.from(chks).filter(c=>c.checked).length;
+  document.getElementById('summary-content').innerHTML=`
+    <div class="metric-grid">
+      <div class="metric"><div class="metric-label">TANK INVENTORY เช้า</div><div class="metric-val">${g('tank_inv')}<span class="metric-unit">%</span></div></div>
+      <div class="metric"><div class="metric-label">CFP DEMAND FORECAST</div><div class="metric-val">${g('cfp_demand')}<span class="metric-unit">MMSCFD</span></div></div>
+      <div class="metric"><div class="metric-label">NOMINATED</div><div class="metric-val">${n}<span class="metric-unit">MMSCFD</span></div></div>
+      <div class="metric"><div class="metric-label">ACTUAL DELIVERED</div><div class="metric-val">${a}<span class="metric-unit">MMSCFD</span></div></div>
+    </div>
+    <div class="metric-grid">
+      <div class="metric"><div class="metric-label">IMBALANCE</div><div class="metric-val" style="font-size:18px;color:${ic}">${imb}</div></div>
+      <div class="metric"><div class="metric-label">CHECKLIST</div><div class="metric-val">${done}<span class="metric-unit">/ ${chks.length}</span></div></div>
+    </div>
+    <div style="background:var(--bg);border-radius:8px;padding:10px 12px;margin-top:.5rem">
+      <div style="font-size:11px;font-weight:600;color:var(--muted);margin-bottom:4px">EVENTS & ACTIONS</div>
+      <div style="font-size:13px;white-space:pre-wrap">${g('events_actions')}</div>
+    </div>`;
+}
+const now=new Date();
+document.getElementById('today-date').textContent=now.toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric',weekday:'long'});
+document.getElementById('hourly_time').value=now.toTimeString().slice(0,5);
+document.getElementById('ov_time').value=now.toTimeString().slice(0,5);
+</script>
+</body>
+</html>
