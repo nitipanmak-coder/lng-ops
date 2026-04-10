@@ -417,7 +417,7 @@ function mkCard(data,container){
   const nom=parseFloat(data.eod_nom)||0, act=parseFloat(data.eod_actual)||0;
   const imb=(data.eod_nom&&data.eod_actual)?(act-nom).toFixed(3):null;
   const varPct=(imb&&nom!==0)?((act-nom)/nom*100).toFixed(1):null;
-  const ic=imb&&Math.abs(parseFloat(imb))>3?'var(--danger)':'var(--success)';
+  const ic=imb&&Math.abs(parseFloat(imb))>window.APP_CONFIG.IMBALANCE_TOLERANCE_MMSCFD?'var(--danger)':'var(--success)';
   const card=document.createElement('div'); card.className='hist-card';
   card.innerHTML=`
     <div class="hist-date">${m.dateKey||'—'}<span class="hist-by">โดย ${m.name||m.email||'—'}</span></div>
@@ -476,13 +476,27 @@ function collectAll(){
   const d={};
   ids.forEach(id=>{const el=document.getElementById(id);if(el)d[id]=el.value;});
   const chk={};
-  for(let i=0;i<=31;i++){const el=document.getElementById('c'+i);if(el)chk['c'+i]=el.querySelector('input')?.checked||false;}
+  document.querySelectorAll('.check-item').forEach(el=>{const cb=el.querySelector('input[type=checkbox]');if(cb)chk[el.id]=cb.checked;});
   d.checklists=chk;
   return d;
 }
 </script>
 
 <script>
+// ===== Appendix A — Operating Limits (TBC จากสัญญาจริง TUA/TSA/GSA) =====
+window.APP_CONFIG = {
+  TANK_ALERT_PERCENT:        30,    // TBC — PTT LNG TUA
+  TANK_CRITICAL_PERCENT:     20,    // TBC — PTT LNG TUA (Escalation)
+  PIPELINE_PRESSURE_LOW:     40,    // TBC — TSO TSA (bar)
+  PIPELINE_PRESSURE_HIGH:    55,    // TBC — TSO TSA (bar)
+  DEMAND_APPROVAL_THRESHOLD:  5,    // TBC — Internal approval matrix (MMSCFD)
+  OVER_DEMAND_SWING_A:        5,    // TBC — Imbalance Tolerance Agreement / TSA (MMSCFD)
+  UNDER_DEMAND_SWING_B:       5,    // TBC — Imbalance Tolerance Agreement / TSA (MMSCFD)
+  IMBALANCE_TOLERANCE_MMSCFD: 3,    // TBC — Imbalance Tolerance Agreement with TSO (MMSCFD)
+  RENOMINATION_RESPONSE_MIN: 30,    // 30 นาที — WI §2.4
+};
+// =========================================================================
+
 window.goStep=i=>{
   document.querySelectorAll('.tab-btn').forEach((t,j)=>t.classList.toggle('active',j===i));
   document.querySelectorAll('.section').forEach((s,j)=>s.classList.toggle('active',j===i));
@@ -500,8 +514,8 @@ window.tglChk=id=>{const el=document.getElementById(id);el.classList.toggle('don
 window.chkTank=()=>{
   const v=parseFloat(document.getElementById('tank_inv').value),s=document.getElementById('tank-st');
   if(isNaN(v)){s.textContent='รอกรอกข้อมูล';s.className='status-display';return;}
-  if(v<20)s.innerHTML='<span class="pill pill-danger">Critical — โทรแจ้ง On-call Manager ทันที</span>';
-  else if(v<30)s.innerHTML='<span class="pill pill-warn">Alert — แจ้ง Senior Engineer</span>';
+  if(v < window.APP_CONFIG.TANK_CRITICAL_PERCENT) s.innerHTML='<span class="pill pill-danger">Critical (< '+window.APP_CONFIG.TANK_CRITICAL_PERCENT+'%) — โทรแจ้ง On-call Manager ทันที</span>';
+  else if(v < window.APP_CONFIG.TANK_ALERT_PERCENT) s.innerHTML='<span class="pill pill-warn">Alert (< '+window.APP_CONFIG.TANK_ALERT_PERCENT+'%) — แจ้ง Senior Engineer</span>';
   else s.innerHTML='<span class="pill pill-ok">ปกติ</span>';
 };
 window.updDemand=()=>{
@@ -515,7 +529,7 @@ window.calcImb=()=>{
   if(!isNaN(n)&&!isNaN(a)){
     const i=(a-n).toFixed(3),pct=n!==0?((a-n)/n*100).toFixed(1):'—';
     ie.textContent=(i>0?'+':'')+i+' MMSCFD';
-    ie.style.color=Math.abs(i)>3?'var(--danger)':'var(--success)';
+    ie.style.color=Math.abs(i)>window.APP_CONFIG.IMBALANCE_TOLERANCE_MMSCFD?'var(--danger)':'var(--success)';
     pe.textContent=pct!=='—'?pct+'%':'—';
     pe.style.color=pct!=='—'&&Math.abs(parseFloat(pct))>5?'var(--danger)':'var(--success)';
   } else {ie.textContent='—';ie.style.color='';pe.textContent='—';pe.style.color='';}
@@ -526,7 +540,7 @@ function buildSummary(){
   let imb='—',vp='—',ic='var(--text)';
   if(n!=='—'&&a!=='—'){
     const i=(parseFloat(a)-parseFloat(n)).toFixed(3);
-    imb=(i>0?'+':'')+i+' MMSCFD'; ic=Math.abs(parseFloat(i))>3?'var(--danger)':'var(--success)';
+    imb=(i>0?'+':'')+i+' MMSCFD'; ic=Math.abs(parseFloat(i))>window.APP_CONFIG.IMBALANCE_TOLERANCE_MMSCFD?'var(--danger)':'var(--success)';
     if(parseFloat(n)!==0)vp=((parseFloat(a)-parseFloat(n))/parseFloat(n)*100).toFixed(1)+'%';
   }
   const chks=document.querySelectorAll('.check-item input[type=checkbox]');
