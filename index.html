@@ -53,13 +53,13 @@ body { font-family: 'IBM Plex Sans Thai', sans-serif; background: var(--bg); col
 .req { color: var(--danger); margin-left: 2px; }
 input[type=text], input[type=number], input[type=time], textarea, select {
   width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px;
-  background: var(--surface); color: var(--text); font-size: 14px; font-family: inherit; outline: none; transition: border-color .15s;
+  background: var(--surface); color: var(--text); font-size: 14px; font-family: inherit; outline: none; transition: all .15s;
 }
 input:focus, textarea:focus, select:focus { border-color: var(--accent); }
 textarea { resize: vertical; min-height: 72px; line-height: 1.5; }
 .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
-.status-display { padding: 8px 10px; font-size: 13px; border-radius: 8px; background: var(--bg); color: var(--muted); }
+.status-display { padding: 8px 10px; font-size: 13px; border-radius: 8px; background: var(--bg); color: var(--muted); transition: all 0.2s; }
 .pill { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 500; }
 .pill-ok { background: var(--success-bg); color: var(--success); }
 .pill-warn { background: var(--warn-bg); color: var(--warn); }
@@ -89,7 +89,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 1rem 0; }
 .metric-label { font-size: 11px; color: var(--muted); font-weight: 500; margin-bottom: 2px; }
 .metric-val { font-size: 20px; font-weight: 600; font-family: 'IBM Plex Mono', monospace; }
 .metric-unit { font-size: 11px; color: var(--muted); font-weight: 400; margin-left: 2px; }
-.imb-display, .var-display { padding: 8px 10px; font-size: 14px; font-weight: 600; border-radius: 8px; background: var(--bg); font-family: 'IBM Plex Mono', monospace; }
+.imb-display, .var-display { padding: 8px 10px; font-size: 14px; font-weight: 600; border-radius: 8px; background: var(--bg); font-family: 'IBM Plex Mono', monospace; transition: all 0.2s;}
 .hist-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
 .hist-title { font-size: 15px; font-weight: 600; }
 .refresh-btn { padding: 6px 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--muted); font-size: 12px; font-family: inherit; cursor: pointer; }
@@ -114,7 +114,6 @@ hr { border: none; border-top: 1px solid var(--border); margin: 1rem 0; }
 </head>
 <body>
 
-<!-- AUTH -->
 <div class="auth-wrap" id="auth-screen">
   <div class="auth-card">
     <div class="auth-icon">⛽</div>
@@ -128,7 +127,6 @@ hr { border: none; border-top: 1px solid var(--border); margin: 1rem 0; }
   </div>
 </div>
 
-<!-- MAIN APP -->
 <div class="container" id="main-app" style="display:none">
   <div class="topbar">
     <div class="user-row">
@@ -156,7 +154,6 @@ hr { border: none; border-top: 1px solid var(--border); margin: 1rem 0; }
     </div>
     <div class="prog-wrap"><div class="prog-bar" id="prog" style="width:20%"></div></div>
 
-    <!-- S1 MORNING -->
     <div class="section active" id="s0">
       <div class="card">
         <div class="card-title">Morning Preparation <span class="time-tag">06:00–08:00</span></div>
@@ -176,399 +173,4 @@ hr { border: none; border-top: 1px solid var(--border); margin: 1rem 0; }
         <hr>
         <div class="card-sub">§1.2 Daily Nomination</div>
         <div class="row3">
-          <div class="field"><label class="label">Nomination Plan (MMSCFD)</label><input type="number" id="nom_plan" placeholder="Weekly Plan" step="0.01"></div>
-          <div class="field"><label class="label">Nomination ปรับแล้ว</label><input type="number" id="nom_adj" placeholder="หลังปรับ Demand" step="0.01"></div>
-          <div class="field"><label class="label">เลขที่ Nomination</label><input type="text" id="nom_ref" placeholder="NOM-YYYYMMDD-001"></div>
-        </div>
-        <div class="row2">
-          <div class="field"><label class="label">เวลาส่ง → PTT LNG <span class="wi-ref">ก่อน 07:00</span></label><input type="time" id="nom_pttlng" value="07:00"></div>
-          <div class="field"><label class="label">เวลาส่ง → TSO <span class="wi-ref">ก่อน 07:30</span></label><input type="time" id="nom_tso" value="07:30"></div>
-        </div>
-        <hr>
-        <div class="card-sub">§1.2–1.3 Checklist</div>
-        <label class="check-item" id="c0"><input type="checkbox" onchange="tglChk('c0')"><span class="check-label">ส่ง Nomination → PTT LNG ภายใน 07:00 น.</span></label>
-        <label class="check-item" id="c1"><input type="checkbox" onchange="tglChk('c1')"><span class="check-label">ส่ง Nomination → TSO ภายใน 07:30 น.</span></label>
-        <label class="check-item" id="c2"><input type="checkbox" onchange="tglChk('c2')"><span class="check-label">บันทึกเลขที่ Nomination และเวลาส่งลงใน Daily Log</span></label>
-        <label class="check-item" id="c3"><input type="checkbox" onchange="tglChk('c3')"><span class="check-label">จัดทำ Morning Status Summary (Nomination / Tank / Pressure / ประเด็นติดตาม)</span></label>
-        <label class="check-item" id="c4"><input type="checkbox" onchange="tglChk('c4')"><span class="check-label">ส่ง Morning Summary → Senior Engineer และ On-call Manager ภายใน 08:00 น.</span></label>
-      </div>
-      <div class="nav"><div></div><button class="nav-btn primary" onclick="goStep(1)">ถัดไป: Daytime →</button></div>
-    </div>
-
-    <!-- S2 DAYTIME -->
-    <div class="section" id="s1">
-      <div class="card">
-        <div class="card-title">Daytime Monitoring <span class="time-tag">08:00–17:00</span></div>
-        <div class="card-sub">§2.1 Real-time Monitoring (ทุก 1 ชั่วโมง)</div>
-        <div class="row3">
-          <div class="field"><label class="label">Actual Usage (MMSCFD)<span class="req">*</span></label><input type="number" id="actual_usage" placeholder="ค่าจริง" step="0.01"></div>
-          <div class="field"><label class="label">Tank Level ปัจจุบัน (%)</label><input type="number" id="tank_now" placeholder="%" step="0.01"></div>
-          <div class="field"><label class="label">เวลาบันทึก</label><input type="time" id="hourly_time"></div>
-        </div>
-        <div class="field"><label class="label">สถานะ Demand <span class="wi-ref">§2.2–2.3</span></label>
-          <select id="demand_status" onchange="updDemand()">
-            <option value="normal">ปกติ — อยู่ใน Tolerance</option>
-            <option value="over">Over-demand — มากกว่าแผน</option>
-            <option value="under">Under-demand — น้อยกว่าแผน</option>
-          </select>
-        </div>
-
-        <!-- FIX 1: Over-demand ครบ 4 ขั้น §2.2 -->
-        <div id="over-act" style="display:none">
-          <div class="alert alert-warn">⚠ Over-demand — ดำเนินการตามลำดับ (WI §2.2)</div>
-          <label class="check-item" id="c5"><input type="checkbox" onchange="tglChk('c5')"><span class="check-label">ขั้น 1 — ประเมินขนาดความเบี่ยงเบน เทียบ Imbalance Tolerance (Appendix A)</span></label>
-          <label class="check-item" id="c6"><input type="checkbox" onchange="tglChk('c6')"><span class="check-label">ขั้น 2 — ส่ง Re-nomination → TSO และ PTT LNG ทันทีที่ตรวจพบ</span></label>
-          <label class="check-item" id="c7"><input type="checkbox" onchange="tglChk('c7')"><span class="check-label">ขั้น 3a — ประสาน Trading BU ซื้อ Co-load เพิ่ม (ถ้าจำเป็น)</span></label>
-          <label class="check-item" id="c8"><input type="checkbox" onchange="tglChk('c8')"><span class="check-label">ขั้น 3b — ทำ Swap / Inter-shipper Trading ผ่าน Trading BU (ถ้าจำเป็น)</span></label>
-          <label class="check-item" id="c9"><input type="checkbox" onchange="tglChk('c9')"><span class="check-label">ขั้น 3c — ขอดึง Pool Gas จาก ERC/Pool Manager ⚠ ต้องได้รับอนุมัติจาก ERC ก่อนทุกครั้ง</span></label>
-          <label class="check-item" id="c10"><input type="checkbox" onchange="tglChk('c10')"><span class="check-label">ขั้น 4 — แจ้ง Senior Engineer และ On-call Manager + บันทึกลงใน Daily Log</span></label>
-        </div>
-
-        <!-- FIX 2: Under-demand ครบ 4 ขั้น §2.3 รวม Deferral Request -->
-        <div id="under-act" style="display:none">
-          <div class="alert alert-info">ℹ Under-demand — ดำเนินการตามลำดับ (WI §2.3)</div>
-          <label class="check-item" id="c11"><input type="checkbox" onchange="tglChk('c11')"><span class="check-label">ขั้น 1 — ประเมินขนาดความเบี่ยงเบน เทียบ Imbalance Tolerance (Appendix A)</span></label>
-          <label class="check-item" id="c12"><input type="checkbox" onchange="tglChk('c12')"><span class="check-label">ขั้น 2 — ส่ง Re-nomination ลดปริมาณ → TSO และ PTT LNG</span></label>
-          <label class="check-item" id="c13"><input type="checkbox" onchange="tglChk('c13')"><span class="check-label">ขั้น 3a — ประสาน Trading BU ระบายผ่าน Co-load (ถ้ายังมีก๊าซส่วนเกิน)</span></label>
-          <label class="check-item" id="c14"><input type="checkbox" onchange="tglChk('c14')"><span class="check-label">ขั้น 3b — ประสาน Shipper รายอื่น Inter-shipper Trading ผ่าน Trading BU (ขาย discount)</span></label>
-          <label class="check-item" id="c15"><input type="checkbox" onchange="tglChk('c15')"><span class="check-label">ขั้น 3c — แจ้ง Supplier (PTTGL) ขอเลื่อนเรือออก (Deferral Request)</span></label>
-          <label class="check-item" id="c16"><input type="checkbox" onchange="tglChk('c16')"><span class="check-label">ขั้น 4 — บันทึกเหตุการณ์และการดำเนินการลงใน Daily Log</span></label>
-        </div>
-
-        <hr>
-        <div class="card-sub">§2.4 Coordination</div>
-        <div class="field"><label class="label">บันทึกการประสานงาน / เหตุการณ์</label><textarea id="daytime_notes" placeholder="เช่น ได้รับแจ้งจาก TSO เรื่อง... / ประสาน CFP เรื่อง..."></textarea></div>
-        <label class="check-item" id="c17"><input type="checkbox" onchange="tglChk('c17')"><span class="check-label">ตอบสนองต่อแจ้งเตือนจาก PTT LNG / TSO ภายใน 30 นาที</span></label>
-        <label class="check-item" id="c18"><input type="checkbox" onchange="tglChk('c18')"><span class="check-label">ประสานงานกับ CFP กรณีมีการเปลี่ยนแปลงแผนการใช้ก๊าซ</span></label>
-        <label class="check-item" id="c19"><input type="checkbox" onchange="tglChk('c19')"><span class="check-label">Update ข้อมูลใน System เป็นปัจจุบันตลอดเวลา</span></label>
-      </div>
-      <div class="nav"><button class="nav-btn" onclick="goStep(0)">← Morning</button><button class="nav-btn primary" onclick="goStep(2)">ถัดไป: Evening →</button></div>
-    </div>
-
-    <!-- S3 EVENING -->
-    <div class="section" id="s2">
-      <div class="card">
-        <div class="card-title">Evening Review <span class="time-tag">17:00–20:00</span></div>
-        <div class="card-sub">§3.1 End-of-Day Gas Allocation</div>
-        <div class="row3">
-          <div class="field"><label class="label">Nominated Volume (MMSCFD)</label><input type="number" id="eod_nom" placeholder="Nom" step="0.01" oninput="calcImb()"></div>
-          <div class="field"><label class="label">Actual รวมวัน (MMSCFD)<span class="req">*</span></label><input type="number" id="eod_actual" placeholder="Actual" step="0.01" oninput="calcImb()"></div>
-          <div class="field"><label class="label">Imbalance (MMSCFD)</label><div class="imb-display" id="imb-val">—</div></div>
-        </div>
-        <!-- FIX 5: เพิ่ม Variance % -->
-        <div class="row2">
-          <div class="field"><label class="label">Variance % <span class="wi-ref">KPI §4.2</span></label><div class="var-display" id="var-pct">—</div></div>
-          <div class="field"><label class="label">สถานะ Imbalance</label>
-            <select id="imb_status"><option value="ok">อยู่ภายใน Tolerance</option><option value="warn">เกิน Tolerance — แจ้ง Senior แล้ว</option></select>
-          </div>
-        </div>
-        <div class="row2">
-          <div class="field"><label class="label">Tank Opening (%)</label><input type="number" id="tank_open" placeholder="%" step="0.01"></div>
-          <div class="field"><label class="label">Tank Closing (%)</label><input type="number" id="tank_close" placeholder="%" step="0.01"></div>
-        </div>
-        <div class="field"><label class="label">LNG รับเข้าวันนี้ (MT) <span class="wi-ref">ถ้ามีเรือ</span></label><input type="number" id="lng_received" placeholder="MT — ปล่อยว่างถ้าไม่มีเรือ" step="0.1"></div>
-
-        <hr>
-        <div class="card-sub">§3.2 Daily Report</div>
-        <div class="field"><label class="label">Pipeline Status (แรงดัน / Imbalance Status)</label><input type="text" id="pipe_status" placeholder="เช่น ปกติ / แรงดัน 46.2 bar"></div>
-        <div class="field"><label class="label">Events & Actions วันนี้ <span class="wi-ref">ส่วนที่ 4 ของ Daily Report</span></label><textarea id="events_actions" placeholder="เหตุการณ์สำคัญ, การดำเนินการที่ทำ, ประเด็นติดตามวันถัดไป"></textarea></div>
-        <label class="check-item" id="c20"><input type="checkbox" onchange="tglChk('c20')"><span class="check-label">ยืนยัน Gas Allocation กับ TSO ภายใน 19:00 น.</span></label>
-        <label class="check-item" id="c21"><input type="checkbox" onchange="tglChk('c21')"><span class="check-label">ส่ง Daily Report → Senior Engineer อนุมัติภายใน 19:30 น.</span></label>
-        <label class="check-item" id="c22"><input type="checkbox" onchange="tglChk('c22')"><span class="check-label">ส่ง Daily Imbalance Report → TSO ภายใน 20:00 น. (DID §2.2)</span></label>
-        <label class="check-item" id="c23"><input type="checkbox" onchange="tglChk('c23')"><span class="check-label">ส่ง Daily Gas Delivery Report → CFP/Thai Oil ภายใน 20:00 น. (DID §2.3)</span></label>
-
-        <hr>
-        <!-- FIX 3: เพิ่ม §3.3 เตรียมแผนวันถัดไป -->
-        <div class="card-sub">§3.3 เตรียมแผนวันถัดไป</div>
-        <div class="field"><label class="label">หมายเหตุ Handover → Overnight Watch Officer</label><textarea id="handover_notes" placeholder="ประเด็นสำคัญที่ต้องติดตามช่วงกลางคืน..."></textarea></div>
-        <label class="check-item" id="c24"><input type="checkbox" onchange="tglChk('c24')"><span class="check-label">ทบทวน Nomination Plan วันพรุ่งนี้ — ตรวจสอบว่าสอดคล้องกับ Demand Forecast</span></label>
-        <label class="check-item" id="c25"><input type="checkbox" onchange="tglChk('c25')"><span class="check-label">กรณีมีเรือ LNG เข้าวันถัดไป: ยืนยัน Cargo Schedule กับ PTT LNG + เตรียม Checklist รับเรือ</span></label>
-        <label class="check-item" id="c26"><input type="checkbox" onchange="tglChk('c26')"><span class="check-label">แจ้ง Overnight Watch Officer ถึงประเด็นสำคัญที่ต้องติดตาม</span></label>
-      </div>
-      <div class="nav"><button class="nav-btn" onclick="goStep(1)">← Daytime</button><button class="nav-btn primary" onclick="goStep(3)">ถัดไป: Overnight →</button></div>
-    </div>
-
-    <!-- S4 OVERNIGHT -->
-    <div class="section" id="s3">
-      <div class="card">
-        <div class="card-title">Overnight Watch <span class="time-tag">20:00–06:00</span></div>
-        <div class="card-sub">§4.1 Monitoring (ทุก 2 ชั่วโมง)</div>
-        <div class="row3">
-          <div class="field"><label class="label">เวลาบันทึก</label><input type="time" id="ov_time"></div>
-          <div class="field"><label class="label">Tank Inventory (%)</label><input type="number" id="ov_tank" placeholder="%" step="0.01"></div>
-          <div class="field"><label class="label">Pipeline Pressure (bar)</label><input type="number" id="ov_press" placeholder="bar" step="0.1"></div>
-        </div>
-        <div class="row2">
-          <div class="field"><label class="label">Send-out Rate (MMSCFD)</label><input type="number" id="ov_sendout" placeholder="MMSCFD" step="0.01"></div>
-          <div class="field"><label class="label">สถานะโดยรวม</label>
-            <select id="ov_status"><option value="normal">ปกติ</option><option value="alert">มีประเด็นติดตาม</option><option value="escalate">เรียก On-call Manager แล้ว</option></select>
-          </div>
-        </div>
-        <div class="field"><label class="label">บันทึก Overnight Log</label><textarea id="ov_notes" placeholder="เหตุการณ์, การดำเนินการ, ประเด็นส่งต่อ Morning shift"></textarea></div>
-
-        <hr>
-        <!-- FIX 4: Escalation Checklist §4.2 ครบ 5 เงื่อนไข -->
-        <div class="card-sub">§4.2 Escalation — โทรแจ้ง On-call Manager ทันทีเมื่อเกิดรายการต่อไปนี้</div>
-        <div class="alert alert-danger" style="font-size:12px;margin-bottom:.75rem">⚠ ติ๊กรายการที่เกิดขึ้นจริง แล้วโทรแจ้ง On-call Manager ทันที</div>
-        <label class="check-item" id="c27"><input type="checkbox" onchange="tglChk('c27')"><span class="check-label">Tank Inventory ต่ำกว่า Critical Level (ค่าตาม Appendix A / TUA)</span></label>
-        <label class="check-item" id="c28"><input type="checkbox" onchange="tglChk('c28')"><span class="check-label">Pipeline Pressure ต่ำกว่า / สูงกว่าค่า Threshold (ค่าตาม Appendix A / TSA)</span></label>
-        <label class="check-item" id="c29"><input type="checkbox" onchange="tglChk('c29')"><span class="check-label">การส่งก๊าซหยุดชะงักหรือลดลงอย่างกะทันหัน</span></label>
-        <label class="check-item" id="c30"><input type="checkbox" onchange="tglChk('c30')"><span class="check-label">ได้รับแจ้งเตือนฉุกเฉินจาก PTT LNG หรือ TSO</span></label>
-        <label class="check-item" id="c31"><input type="checkbox" onchange="tglChk('c31')"><span class="check-label">CFP แจ้งหยุดรับก๊าซกะทันหัน</span></label>
-      </div>
-      <div class="nav"><button class="nav-btn" onclick="goStep(2)">← Evening</button><button class="nav-btn primary" onclick="goStep(4)">สรุป & บันทึก →</button></div>
-    </div>
-
-    <!-- S5 SUMMARY -->
-    <div class="section" id="s4">
-      <div class="card">
-        <div class="card-title">สรุปรายวัน & บันทึกลง Firebase</div>
-        <div id="summary-content"></div>
-        <button class="save-btn" id="save-btn" onclick="saveData()">บันทึกลง Firebase Firestore</button>
-        <div class="save-status" id="save-st"></div>
-      </div>
-      <div class="nav"><button class="nav-btn" onclick="goStep(3)">← Overnight</button><div></div></div>
-    </div>
-  </div>
-
-  <!-- HISTORY -->
-  <div class="view" id="view-history">
-    <div class="hist-header">
-      <span class="hist-title">ประวัติการบันทึกข้อมูล</span>
-      <button class="refresh-btn" onclick="window._loadHist&&window._loadHist()">โหลดใหม่</button>
-    </div>
-    <div id="hist-list"><div class="loading-text">กำลังโหลด...</div></div>
-  </div>
-</div>
-
-<script type="module">
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut as fbOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
-import { getFirestore, doc, setDoc, getDocs, collection, query, orderBy, limit } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
-
-const cfg = {
-  apiKey: "AIzaSyDDmrBVyiZ6-EAQSLl5dhXS9CBnVQ-a1yA",
-  authDomain: "top-5c714.firebaseapp.com",
-  projectId: "top-5c714",
-  storageBucket: "top-5c714.firebasestorage.app",
-  messagingSenderId: "667480940442",
-  appId: "1:667480940442:web:2e86ecf96d970af2626423",
-  measurementId: "G-NK4RX207RH"
-};
-const app = initializeApp(cfg);
-const auth = getAuth(app);
-const db = getFirestore(app);
-const provider = new GoogleAuthProvider();
-let me = null;
-
-onAuthStateChanged(auth, u => {
-  me = u;
-  if(u) {
-    document.getElementById('auth-screen').style.display = 'none';
-    document.getElementById('main-app').style.display = 'block';
-    const ini = (u.displayName||'U').split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase();
-    document.getElementById('user-av').textContent = ini||'U';
-    document.getElementById('user-nm').textContent = u.displayName||u.email;
-    window._loadHist();
-  } else {
-    document.getElementById('auth-screen').style.display = 'flex';
-    document.getElementById('main-app').style.display = 'none';
-  }
-});
-
-window.signIn = async () => {
-  document.getElementById('auth-err').textContent = '';
-  try { await signInWithPopup(auth, provider); }
-  catch(e) { document.getElementById('auth-err').textContent = e.message; }
-};
-window.doSignOut = () => fbOut(auth);
-
-window.saveData = async () => {
-  if(!me) return;
-  const btn=document.getElementById('save-btn'), st=document.getElementById('save-st');
-  btn.disabled=true; st.textContent='กำลังบันทึก...'; st.className='save-status';
-  try {
-    const now=new Date(), dk=now.toISOString().slice(0,10);
-    const d=collectAll();
-    d.meta={uid:me.uid,name:me.displayName,email:me.email,savedAt:now.toISOString(),dateKey:dk};
-    await setDoc(doc(db,'daily_ops',dk+'_'+me.uid),d,{merge:true});
-    st.textContent='✓ บันทึกสำเร็จ — '+now.toLocaleTimeString('th-TH');
-    st.className='save-status save-ok';
-  } catch(e) {
-    st.textContent='✗ '+e.message; st.className='save-status save-err';
-  }
-  btn.disabled=false;
-};
-
-window._loadHist = async () => {
-  const list=document.getElementById('hist-list');
-  if(!me){list.innerHTML='<div class="hist-empty">กรุณา Login ก่อน</div>';return;}
-  list.innerHTML='<div class="loading-text">กำลังโหลด...</div>';
-  try {
-    const snap=await getDocs(query(collection(db,'daily_ops'),orderBy('meta.savedAt','desc'),limit(30)));
-    if(snap.empty){list.innerHTML='<div class="hist-empty">ยังไม่มีข้อมูลที่บันทึก</div>';return;}
-    list.innerHTML='';
-    snap.forEach(d=>mkCard(d.data(),list));
-  } catch(e) { list.innerHTML=`<div class="hist-empty">โหลดไม่สำเร็จ: ${e.message}</div>`; }
-};
-
-function mkCard(data,container){
-  const m=data.meta||{};
-  const nom=parseFloat(data.eod_nom)||0, act=parseFloat(data.eod_actual)||0;
-  const imb=(data.eod_nom&&data.eod_actual)?(act-nom).toFixed(3):null;
-  const varPct=(imb&&nom!==0)?((act-nom)/nom*100).toFixed(1):null;
-  const ic=imb&&Math.abs(parseFloat(imb))>window.APP_CONFIG.IMBALANCE_TOLERANCE_MMSCFD?'var(--danger)':'var(--success)';
-  const card=document.createElement('div'); card.className='hist-card';
-  card.innerHTML=`
-    <div class="hist-date">${m.dateKey||'—'}<span class="hist-by">โดย ${m.name||m.email||'—'}</span></div>
-    <div class="hist-row">
-      <div class="hist-item">Tank: <strong>${data.tank_inv||'—'}%</strong></div>
-      <div class="hist-item">CFP Demand: <strong>${data.cfp_demand||'—'} MMSCFD</strong></div>
-      <div class="hist-item">Actual: <strong>${data.eod_actual||'—'} MMSCFD</strong></div>
-      ${imb?`<div class="hist-item">Imbalance: <strong style="color:${ic}">${parseFloat(imb)>0?'+':''}${imb} (${varPct}%)</strong></div>`:''}
-    </div>`;
-  card.onclick=()=>{
-    let nx=card.nextElementSibling;
-    if(nx&&nx.classList.contains('hist-detail')){nx.classList.toggle('open');return;}
-    const det=document.createElement('div'); det.className='hist-detail open';
-    det.innerHTML=`
-      <div class="det-title">Morning</div>
-      <div class="det-grid">
-        <div class="det-field"><span>Tank:</span> ${data.tank_inv||'—'}%</div>
-        <div class="det-field"><span>Pressure:</span> ${data.pipe_press||'—'} bar</div>
-        <div class="det-field"><span>Flow Rate:</span> ${data.flow_rate||'—'} MMSCFD</div>
-        <div class="det-field"><span>CFP Demand:</span> ${data.cfp_demand||'—'} MMSCFD</div>
-        <div class="det-field"><span>Nom Plan:</span> ${data.nom_plan||'—'} MMSCFD</div>
-        <div class="det-field"><span>Nom Ref:</span> ${data.nom_ref||'—'}</div>
-      </div>
-      <div class="det-title">Daytime</div>
-      <div class="det-grid">
-        <div class="det-field"><span>Actual Usage:</span> ${data.actual_usage||'—'} MMSCFD</div>
-        <div class="det-field"><span>Demand Status:</span> ${data.demand_status||'—'}</div>
-      </div>
-      ${data.daytime_notes?`<div style="font-size:13px;margin-top:6px">${data.daytime_notes}</div>`:''}
-      <div class="det-title">Evening — Daily Report</div>
-      <div class="det-grid">
-        <div class="det-field"><span>Nominated:</span> ${data.eod_nom||'—'} MMSCFD</div>
-        <div class="det-field"><span>Actual:</span> ${data.eod_actual||'—'} MMSCFD</div>
-        <div class="det-field"><span>Imbalance:</span> ${imb?(parseFloat(imb)>0?'+':'')+imb+' MMSCFD':'—'}</div>
-        <div class="det-field"><span>Variance %:</span> ${varPct?varPct+'%':'—'}</div>
-        <div class="det-field"><span>Tank Open:</span> ${data.tank_open||'—'}%</div>
-        <div class="det-field"><span>Tank Close:</span> ${data.tank_close||'—'}%</div>
-        <div class="det-field"><span>LNG รับเข้า:</span> ${data.lng_received?data.lng_received+' MT':'—'}</div>
-        <div class="det-field"><span>Imb. Status:</span> ${data.imb_status||'—'}</div>
-      </div>
-      ${data.events_actions?`<div style="font-size:13px;margin-top:6px;white-space:pre-wrap">${data.events_actions}</div>`:''}
-      <div class="det-title">Overnight</div>
-      <div style="font-size:13px">${data.ov_notes||'ไม่มีเหตุการณ์'}</div>
-      ${data.handover_notes?`<div style="font-size:13px;margin-top:4px;color:var(--warn)">Handover: ${data.handover_notes}</div>`:''}
-      <div style="font-size:11px;color:var(--muted);margin-top:.5rem">บันทึกเมื่อ: ${m.savedAt?new Date(m.savedAt).toLocaleString('th-TH'):'—'}</div>`;
-    card.after(det);
-  };
-  container.appendChild(card);
-}
-
-function collectAll(){
-  const ids=['tank_inv','pipe_press','flow_rate','regas_rate','cfp_demand','nom_plan','nom_adj','nom_ref',
-    'nom_pttlng','nom_tso','actual_usage','tank_now','hourly_time','demand_status','daytime_notes',
-    'eod_nom','eod_actual','tank_open','tank_close','lng_received','imb_status','pipe_status',
-    'events_actions','handover_notes','ov_time','ov_tank','ov_press','ov_sendout','ov_status','ov_notes'];
-  const d={};
-  ids.forEach(id=>{const el=document.getElementById(id);if(el)d[id]=el.value;});
-  const chk={};
-  document.querySelectorAll('.check-item').forEach(el=>{const cb=el.querySelector('input[type=checkbox]');if(cb)chk[el.id]=cb.checked;});
-  d.checklists=chk;
-  return d;
-}
-</script>
-
-<script>
-// ===== Appendix A — Operating Limits (TBC จากสัญญาจริง TUA/TSA/GSA) =====
-window.APP_CONFIG = {
-  TANK_ALERT_PERCENT:        30,    // TBC — PTT LNG TUA
-  TANK_CRITICAL_PERCENT:     20,    // TBC — PTT LNG TUA (Escalation)
-  PIPELINE_PRESSURE_LOW:     40,    // TBC — TSO TSA (bar)
-  PIPELINE_PRESSURE_HIGH:    55,    // TBC — TSO TSA (bar)
-  DEMAND_APPROVAL_THRESHOLD:  5,    // TBC — Internal approval matrix (MMSCFD)
-  OVER_DEMAND_SWING_A:        5,    // TBC — Imbalance Tolerance Agreement / TSA (MMSCFD)
-  UNDER_DEMAND_SWING_B:       5,    // TBC — Imbalance Tolerance Agreement / TSA (MMSCFD)
-  IMBALANCE_TOLERANCE_MMSCFD: 3,    // TBC — Imbalance Tolerance Agreement with TSO (MMSCFD)
-  RENOMINATION_RESPONSE_MIN: 30,    // 30 นาที — WI §2.4
-};
-// =========================================================================
-
-window.goStep=i=>{
-  document.querySelectorAll('.tab-btn').forEach((t,j)=>t.classList.toggle('active',j===i));
-  document.querySelectorAll('.section').forEach((s,j)=>s.classList.toggle('active',j===i));
-  document.getElementById('prog').style.width=[20,40,60,80,100][i]+'%';
-  if(i===4)buildSummary();
-};
-window.switchTab=tab=>{
-  ['form','history'].forEach((t,i)=>{
-    document.querySelectorAll('.app-tab')[i].classList.toggle('active',t===tab);
-    document.getElementById('view-'+t).classList.toggle('active',t===tab);
-  });
-  if(tab==='history'&&window._loadHist)window._loadHist();
-};
-window.tglChk=id=>{const el=document.getElementById(id);el.classList.toggle('done',el.querySelector('input').checked);};
-window.chkTank=()=>{
-  const v=parseFloat(document.getElementById('tank_inv').value),s=document.getElementById('tank-st');
-  if(isNaN(v)){s.textContent='รอกรอกข้อมูล';s.className='status-display';return;}
-  if(v < window.APP_CONFIG.TANK_CRITICAL_PERCENT) s.innerHTML='<span class="pill pill-danger">Critical (< '+window.APP_CONFIG.TANK_CRITICAL_PERCENT+'%) — โทรแจ้ง On-call Manager ทันที</span>';
-  else if(v < window.APP_CONFIG.TANK_ALERT_PERCENT) s.innerHTML='<span class="pill pill-warn">Alert (< '+window.APP_CONFIG.TANK_ALERT_PERCENT+'%) — แจ้ง Senior Engineer</span>';
-  else s.innerHTML='<span class="pill pill-ok">ปกติ</span>';
-};
-window.updDemand=()=>{
-  const v=document.getElementById('demand_status').value;
-  document.getElementById('over-act').style.display=v==='over'?'block':'none';
-  document.getElementById('under-act').style.display=v==='under'?'block':'none';
-};
-window.calcImb=()=>{
-  const n=parseFloat(document.getElementById('eod_nom').value),a=parseFloat(document.getElementById('eod_actual').value);
-  const ie=document.getElementById('imb-val'),pe=document.getElementById('var-pct');
-  if(!isNaN(n)&&!isNaN(a)){
-    const i=(a-n).toFixed(3),pct=n!==0?((a-n)/n*100).toFixed(1):'—';
-    ie.textContent=(i>0?'+':'')+i+' MMSCFD';
-    ie.style.color=Math.abs(i)>window.APP_CONFIG.IMBALANCE_TOLERANCE_MMSCFD?'var(--danger)':'var(--success)';
-    pe.textContent=pct!=='—'?pct+'%':'—';
-    pe.style.color=pct!=='—'&&Math.abs(parseFloat(pct))>5?'var(--danger)':'var(--success)';
-  } else {ie.textContent='—';ie.style.color='';pe.textContent='—';pe.style.color='';}
-};
-function buildSummary(){
-  const g=id=>(document.getElementById(id)||{}).value||'—';
-  const n=g('eod_nom'),a=g('eod_actual');
-  let imb='—',vp='—',ic='var(--text)';
-  if(n!=='—'&&a!=='—'){
-    const i=(parseFloat(a)-parseFloat(n)).toFixed(3);
-    imb=(i>0?'+':'')+i+' MMSCFD'; ic=Math.abs(parseFloat(i))>window.APP_CONFIG.IMBALANCE_TOLERANCE_MMSCFD?'var(--danger)':'var(--success)';
-    if(parseFloat(n)!==0)vp=((parseFloat(a)-parseFloat(n))/parseFloat(n)*100).toFixed(1)+'%';
-  }
-  const chks=document.querySelectorAll('.check-item input[type=checkbox]');
-  const done=Array.from(chks).filter(c=>c.checked).length;
-  document.getElementById('summary-content').innerHTML=`
-    <div class="metric-grid">
-      <div class="metric"><div class="metric-label">TANK INVENTORY เช้า</div><div class="metric-val">${g('tank_inv')}<span class="metric-unit">%</span></div></div>
-      <div class="metric"><div class="metric-label">CFP DEMAND FORECAST</div><div class="metric-val">${g('cfp_demand')}<span class="metric-unit">MMSCFD</span></div></div>
-      <div class="metric"><div class="metric-label">NOMINATED</div><div class="metric-val">${n}<span class="metric-unit">MMSCFD</span></div></div>
-      <div class="metric"><div class="metric-label">ACTUAL DELIVERED</div><div class="metric-val">${a}<span class="metric-unit">MMSCFD</span></div></div>
-    </div>
-    <div class="metric-grid">
-      <div class="metric"><div class="metric-label">IMBALANCE</div><div class="metric-val" style="font-size:16px;color:${ic}">${imb}</div></div>
-      <div class="metric"><div class="metric-label">VARIANCE %</div><div class="metric-val" style="font-size:16px;color:${ic}">${vp}</div></div>
-    </div>
-    <div class="metric-grid">
-      <div class="metric"><div class="metric-label">TANK CLOSING</div><div class="metric-val">${g('tank_close')}<span class="metric-unit">%</span></div></div>
-      <div class="metric"><div class="metric-label">CHECKLIST สำเร็จ</div><div class="metric-val">${done}<span class="metric-unit">/ ${chks.length}</span></div></div>
-    </div>
-    <div style="background:var(--bg);border-radius:8px;padding:10px 12px;margin-top:.5rem">
-      <div style="font-size:11px;font-weight:600;color:var(--muted);margin-bottom:4px">EVENTS & ACTIONS</div>
-      <div style="font-size:13px;white-space:pre-wrap">${g('events_actions')}</div>
-    </div>`;
-}
-const now=new Date();
-document.getElementById('today-date').textContent=now.toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric',weekday:'long'});
-document.getElementById('hourly_time').value=now.toTimeString().slice(0,5);
-document.getElementById('ov_time').value=now.toTimeString().slice(0,5);
-</script>
-</body>
-</html>
+          <div class="field"><label class
