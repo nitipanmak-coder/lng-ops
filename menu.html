@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LNG Operations — เลือก App</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'IBM Plex Sans Thai',sans-serif;background:#f7f6f3;color:#1a1916;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem 1rem}
+.logo{font-size:13px;font-weight:600;color:#6b6860;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.5rem;text-align:center}
+.title{font-size:24px;font-weight:600;text-align:center;margin-bottom:.375rem}
+.sub{font-size:14px;color:#6b6860;text-align:center;margin-bottom:2.5rem}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:1rem;width:100%;max-width:580px}
+.app-card{background:#fff;border:1px solid #e2e0da;border-radius:14px;padding:1.75rem 1.5rem;text-decoration:none;color:#1a1916;transition:box-shadow .15s,transform .15s;display:flex;flex-direction:column;gap:.75rem;box-shadow:0 1px 3px rgba(0,0,0,.07)}
+.app-card:hover{box-shadow:0 6px 20px rgba(0,0,0,.1);transform:translateY(-2px)}
+.app-icon{font-size:32px}
+.app-name{font-size:16px;font-weight:600}
+.app-desc{font-size:13px;color:#6b6860;line-height:1.5}
+.app-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:auto;padding-top:.5rem}
+.tag{font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;background:#f7f6f3;color:#6b6860;border:1px solid #e2e0da}
+.tag-blue{background:#eff4ff;color:#1a56db;border-color:#c7d7fd}
+.tag-green{background:#f0fdf4;color:#057a55;border-color:#bbf7d0}
+.tag-amber{background:#fffbeb;color:#b45309;border-color:#fde68a}
+.card-accent-blue{border-top:3px solid #1a56db}
+.card-accent-green{border-top:3px solid #057a55}
+.footer{margin-top:2rem;font-size:12px;color:#6b6860;text-align:center}
+</style>
+</head>
+<body>
+
+<div class="logo">PTT NGRCC</div>
+<div class="title">LNG Operations</div>
+<div class="sub">Supply LNG to CFP Project · 130 MMSCFD · เลือก App ที่ต้องการใช้งาน</div>
+
+<div class="cards">
+
+  <a href="index.html" class="app-card card-accent-blue">
+    <div class="app-icon">📋</div>
+    <div class="app-name">LNG Daily Log</div>
+    <div class="app-desc">
+      บันทึกข้อมูลประจำวัน Morning → Daytime → Evening → Overnight
+      พร้อม Checklist ตาม WI-NGR-OPS-001
+    </div>
+    <div class="app-tags">
+      <span class="tag tag-blue">WI-NGR-OPS-001</span>
+      <span class="tag">4 Shifts</span>
+      <span class="tag">Checklist</span>
+      <span class="tag">History</span>
+    </div>
+  </a>
+
+  <a href="ngrcc.html" class="app-card card-accent-green">
+    <div class="app-icon">⛽</div>
+    <div class="app-name">NGRCC Daily Ops</div>
+    <div class="app-desc">
+      DID Timeline · Overnight Log · Nomination · Incidents
+      Daily Report พร้อม Audit Trail แบบ Real-time
+    </div>
+    <div class="app-tags">
+      <span class="tag tag-green">DID Timeline</span>
+      <span class="tag tag-amber">Overnight Log</span>
+      <span class="tag">Nomination</span>
+      <span class="tag">Audit</span>
+    </div>
+  </a>
+
+</div>
+
+<div class="footer">Firebase · Realtime · GMT+7 · ข้อมูลทั้งหมดเก็บใน Firestore project เดียวกัน</div>
+
+</body>
+</html>
